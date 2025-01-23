@@ -9,6 +9,6 @@
         public bool IsUnique { get; set; }
         public bool IsAutoIncrement { get; set; }
         public bool HasZeroFlag { get; set; }
-        public string DefaultExpression { get; set; }
+        public string? DefaultExpression { get; set; }
     }
 }
