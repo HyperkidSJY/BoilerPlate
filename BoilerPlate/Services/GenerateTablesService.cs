@@ -1,5 +1,6 @@
 ﻿using BoilerPlate.Models;
 using BoilerPlate.Models.DTO;
+using System.Diagnostics.Metrics;
 
 namespace BoilerPlate.Services
 {
@@ -39,7 +40,7 @@ namespace BoilerPlate.Services
                 }
                 if (field.DefaultExpression != null)
                 {
-                    query += $" Default";
+                    query += $" Default {FormatDefaultExpression(field.DataType,field.DefaultExpression)}";
                 }
                 query += $" COMMENT '{field.ColumnName}'";
                 cnt++;
@@ -52,11 +53,12 @@ namespace BoilerPlate.Services
             }
             Query += "}";
             Console.WriteLine(Query);
+
             _objResponse.Data = Query;
             _objResponse.IsError = false;
             return _objResponse;
         }
-
+        
         public Response GenerateDTO(List<DTOTableDefinition> lstDTOTableDefinition, string tableName)
         {
             int cnt = 1;
@@ -76,6 +78,28 @@ namespace BoilerPlate.Services
             _objResponse.IsError = false;
             Console.WriteLine(Query);
             return _objResponse;
+        }
+        public string FormatDefaultExpression(string sqlDataType, string defaultExpression)
+        {
+            var typesRequiringQuotes = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+            {
+                "char",
+                "nchar",
+                "varchar",
+                "nvarchar",
+                "text",
+                "ntext",
+                "xml",
+                "uniqueidentifier"
+            };
+
+            // Check if data type needs quotes for the default expression
+            if (typesRequiringQuotes.Contains(sqlDataType))
+            {
+                return $"'{defaultExpression}'"; // Wrap in quotes for string-like types
+            }
+
+            return defaultExpression; // No quotes for numeric types
         }
 
         public static string GetCSharpDataType(string sqlDataType)
