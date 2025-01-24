@@ -1,20 +1,20 @@
 ﻿using BoilerPlate.Models;
 using BoilerPlate.Models.DTO;
-using System.Diagnostics.Metrics;
 
 namespace BoilerPlate.Services
 {
     public class GenerateTablesService
     {
         Response _objResponse;
-        public GenerateTablesService() { 
+        public GenerateTablesService()
+        {
             _objResponse = new Response();
         }
-        public Response GenerateTableQuery(List<DTOTableDefinition> lstDTOTableDefinition , string tableName)
+        public Response GenerateTableQuery(List<DTOTableDefinition> lstDTOTableDefinition, string tableName)
         {
             List<String> lstFieldNames = new();
             int cnt = 1;
-            foreach(DTOTableDefinition field in lstDTOTableDefinition)
+            foreach (DTOTableDefinition field in lstDTOTableDefinition)
             {
                 string query = $"{tableName.Substring(tableName.Length - 3)}F0{cnt} {field.DataType}";
                 if (field.IsPrimaryKey)
@@ -33,29 +33,31 @@ namespace BoilerPlate.Services
                 {
                     query += " NOT NULL";
                 }
-                if (field.HasZeroFlag) {
+                if (field.HasZeroFlag)
+                {
                     query += " NOT NULL";
                 }
-                if(field.DefaultExpression != null)
+                if (field.DefaultExpression != null)
                 {
-                    query += $" Default";
+                    query += $" Default {FormatDefaultExpression(field.DataType,field.DefaultExpression)}";
                 }
                 query += $" COMMENT '{field.ColumnName}'";
                 cnt++;
                 lstFieldNames.Add(query);
             }
             string Query = $"CREATE TABLE {tableName}(\n";
-            foreach(string fields in lstFieldNames)
+            foreach (string fields in lstFieldNames)
             {
                 Query += (fields + "\n");
             }
             Query += "}";
             Console.WriteLine(Query);
+
             _objResponse.Data = Query;
             _objResponse.IsError = false;
             return _objResponse;
         }
-        
+
         public Response GenerateDTO(List<DTOTableDefinition> lstDTOTableDefinition, string tableName)
         {
             int cnt = 1;
@@ -76,10 +78,32 @@ namespace BoilerPlate.Services
                 cnt++;
             }
             string Query = $"public class DTO{tableName}\n{{\n{query}";
-            _objResponse.Data = Query; 
+            _objResponse.Data = Query;
             _objResponse.IsError = false;
             Console.WriteLine(Query);
             return _objResponse;
+        }
+        public string FormatDefaultExpression(string sqlDataType, string defaultExpression)
+        {
+            var typesRequiringQuotes = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+            {
+                "char",
+                "nchar",
+                "varchar",
+                "nvarchar",
+                "text",
+                "ntext",
+                "xml",
+                "uniqueidentifier"
+            };
+
+            // Check if data type needs quotes for the default expression
+            if (typesRequiringQuotes.Contains(sqlDataType))
+            {
+                return $"'{defaultExpression}'"; // Wrap in quotes for string-like types
+            }
+
+            return defaultExpression; // No quotes for numeric types
         }
 
         public static string GetCSharpDataType(string sqlDataType)
