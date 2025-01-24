@@ -20,7 +20,8 @@ namespace BoilerPlate.Controllers
         [HttpPost, Route("GenerateTable")]
         public IActionResult  CreateQuery([FromBody]List<DTOTableDefinition> lstDTOTableDefinitions, [FromQuery]string tableName)
         {
-            _objResponse = _tablesService.GenerateTableQuery(lstDTOTableDefinitions , tableName); 
+            _objResponse = _tablesService.GenerateTableQuery(lstDTOTableDefinitions , tableName);
+            _tablesService.GenerateDTO(lstDTOTableDefinitions, tableName);
             return Ok(_objResponse);
         }
     }

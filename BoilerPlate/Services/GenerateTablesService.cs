@@ -40,7 +40,7 @@ namespace BoilerPlate.Services
                 {
                     query += $" Default";
                 }
-                query += $"COMMENT '{field.ColumnName}'";
+                query += $" COMMENT '{field.ColumnName}'";
                 cnt++;
                 lstFieldNames.Add(query);
             }
@@ -49,6 +49,7 @@ namespace BoilerPlate.Services
             {
                 Query += (fields + "\n");
             }
+            Console.WriteLine(Query);
             _objResponse.Data = Query;
             _objResponse.IsError = false;
             return _objResponse;
@@ -60,14 +61,20 @@ namespace BoilerPlate.Services
             string query = "";
             foreach (DTOTableDefinition field in lstDTOTableDefinition)
             {
-                string jsonProperty = $"[JsonProperty(\"{tableName[-3..]}1{cnt}\")]\n";
+                string jsonProperty = $"[JsonProperty(\"{tableName.Substring(tableName.Length - 3)}1{cnt}\")]\n";\
+                if(query == "")
+                {
                 query = jsonProperty;
-                string attribute = $"public {field.DataType} {tableName[-3..]}F{cnt} {{ get; set; }}\n";
+
+                }
+                string attribute = $"public {field.DataType} {tableName.Substring(tableName.Length - 3)}F{cnt} {{ get; set; }}\n";
                 query += attribute;
+                cnt++;
             }
             string Query = $"public class DTO{tableName}\n{{\n{query}";
-            _objResponse.Data = Query;
+            _objResponse.Data = Query; 
             _objResponse.IsError = false;
+            Console.WriteLine(Query);
             return _objResponse;
         }
 
