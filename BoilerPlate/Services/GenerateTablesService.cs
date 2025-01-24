@@ -61,12 +61,15 @@ namespace BoilerPlate.Services
             string query = "";
             foreach (DTOTableDefinition field in lstDTOTableDefinition)
             {
-                string jsonProperty = $"[JsonProperty(\"{tableName.Substring(tableName.Length - 3)}1{cnt}\")]\n";\
-                if(query == "")
-                {
-                query = jsonProperty;
-
-                }
+                string jsonProperty = $"[JsonProperty(\"{tableName.Substring(tableName.Length - 3)}1{cnt}\")]\n";
+                //if(query ==  "") {
+                //    query = jsonProperty;
+                //}
+                //else
+                //{
+                //    query += jsonProperty;
+                //}
+                query += jsonProperty;
                 string attribute = $"public {field.DataType} {tableName.Substring(tableName.Length - 3)}F{cnt} {{ get; set; }}\n";
                 query += attribute;
                 cnt++;

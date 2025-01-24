@@ -3,6 +3,7 @@ using BoilerPlate.Models.DTO;
 using BoilerPlate.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace BoilerPlate.Controllers
 {
@@ -12,17 +13,15 @@ namespace BoilerPlate.Controllers
     {
         private readonly GenerateTablesService _tablesService;
         private Response _objResponse; 
-        public GenerateController()
+        public GenerateController(GenerateTablesService tablesService)
         {
-            _tablesService = new GenerateTablesService();
+            _tablesService = tablesService;
             _objResponse = new Response();
         }
-        [HttpPost, Route("GenerateTable")]
-        public IActionResult  CreateQuery([FromBody]List<DTOTableDefinition> lstDTOTableDefinitions, [FromQuery]string tableName)
+        [HttpPost, Route("GenerateTable/{tableName}")]
+        public IActionResult  CreateQuery([FromBody]List<DTOTableDefinition> lstDTOTableDefinitions, string tableName)
         {
-            _objResponse = _tablesService.GenerateTableQuery(lstDTOTableDefinitions , tableName);
-            _tablesService.GenerateDTO(lstDTOTableDefinitions, tableName);
-            return Ok(_objResponse);
+            return Ok(JsonConvert.SerializeObject(_tablesService.GenerateTableQuery(lstDTOTableDefinitions, tableName)));
         }
     }
 }
