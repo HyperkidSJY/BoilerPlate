@@ -62,19 +62,13 @@ namespace BoilerPlate.Services
             foreach (DTOTableDefinition field in lstDTOTableDefinition)
             {
                 string jsonProperty = $"[JsonProperty(\"{tableName.Substring(tableName.Length - 3)}1{cnt}\")]\n";
-                //if(query ==  "") {
-                //    query = jsonProperty;
-                //}
-                //else
-                //{
-                //    query += jsonProperty;
-                //}
                 query += jsonProperty;
-                string attribute = $"public {field.DataType} {tableName.Substring(tableName.Length - 3)}F{cnt} {{ get; set; }}\n";
+                string count = cnt > 10 ? cnt.ToString() : $"0{cnt}";
+                string attribute = $"public {field.DataType} {tableName.Substring(tableName.Length - 3)}F{count} {{ get; set; }}\n";
                 query += attribute;
                 cnt++;
             }
-            string Query = $"public class DTO{tableName}\n{{\n{query}";
+            string Query = $"public class DTO{tableName}\n{{\n{query}\n}}";
             _objResponse.Data = Query; 
             _objResponse.IsError = false;
             Console.WriteLine(Query);

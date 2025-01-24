@@ -23,5 +23,11 @@ namespace BoilerPlate.Controllers
         {
             return Ok(JsonConvert.SerializeObject(_tablesService.GenerateTableQuery(lstDTOTableDefinitions, tableName)));
         }
+
+        [HttpPost, Route("GenerateDTO/{tableName}")]
+        public IActionResult CreateDTO([FromBody] List<DTOTableDefinition> lstDTOTableDefinitions, string tableName)
+        {
+            return Ok(JsonConvert.SerializeObject(_tablesService.GenerateDTO(lstDTOTableDefinitions, tableName)));
+        }
     }
 }
