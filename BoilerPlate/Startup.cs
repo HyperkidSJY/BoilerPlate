@@ -1,4 +1,5 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using BoilerPlate.Services;
+using Microsoft.OpenApi.Models;
 
 namespace BoilerPlate
 {
@@ -16,6 +17,7 @@ namespace BoilerPlate
             services.AddControllers();
             services.AddSwaggerGen();
             services.AddEndpointsApiExplorer();
+            services.AddScoped<GenerateTablesService>();
         }
 
         public void Configure(WebApplication app, IWebHostEnvironment env)

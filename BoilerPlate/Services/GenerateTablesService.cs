@@ -15,7 +15,7 @@ namespace BoilerPlate.Services
             int cnt = 1;
             foreach(DTOTableDefinition field in lstDTOTableDefinition)
             {
-                string query = $"{tableName[-3..]}F0{cnt} {field.DataType}";
+                string query = $"{tableName.Substring(tableName.Length - 3)}F0{cnt} {field.DataType}";
                 if (field.IsPrimaryKey)
                 {
                     query += " PRIMARY KEY";
