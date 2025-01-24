@@ -49,6 +49,7 @@ namespace BoilerPlate.Services
             {
                 Query += (fields + "\n");
             }
+            Query += "}";
             Console.WriteLine(Query);
             _objResponse.Data = Query;
             _objResponse.IsError = false;
@@ -80,6 +81,50 @@ namespace BoilerPlate.Services
             Console.WriteLine(Query);
             return _objResponse;
         }
+
+        public static string GetCSharpDataType(string sqlDataType)
+        {
+            var typeMappings = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            // Numeric types
+            { "bigint", "long" },
+            { "binary", "byte[]" },
+            { "bit", "bool" },
+            { "char", "string" },
+            { "date", "DateTime" },
+            { "datetime", "DateTime" },
+            { "datetime2", "DateTime" },
+            { "datetimeoffset", "DateTimeOffset" },
+            { "decimal", "decimal" },
+            { "float", "double" },
+            { "image", "byte[]" },
+            { "int", "int" },
+            { "money", "decimal" },
+            { "nchar", "string" },
+            { "ntext", "string" },
+            { "numeric", "decimal" },
+            { "nvarchar", "string" },
+            { "real", "float" },
+            { "rowversion", "byte[]" },
+            { "smalldatetime", "DateTime" },
+            { "smallint", "short" },
+            { "smallmoney", "decimal" },
+            { "sql_variant", "object" },
+            { "text", "string" },
+            { "time", "TimeSpan" },
+            { "timestamp", "byte[]" },
+            { "tinyint", "byte" },
+            { "uniqueidentifier", "Guid" },
+            { "varbinary", "byte[]" },
+            { "varchar", "string" },
+            { "xml", "string" }
+        };
+            //string csharpType = SqlToCSharpMapper.GetCSharpDataType(sqlType);
+            return typeMappings.TryGetValue(sqlDataType, out var csharpType)
+                ? csharpType
+                : "object"; // Default to 'object' if no match found
+        }
+
 
     }
 }
