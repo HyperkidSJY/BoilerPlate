@@ -1,7 +1,8 @@
 ﻿using BoilerPlate.Services;
 using Microsoft.OpenApi.Models;
 
-namespace BoilerPlate
+namespace namespace <Enter your Namespace Here>
+
 {
     public class Startup
     {
@@ -17,8 +18,6 @@ namespace BoilerPlate
             services.AddControllers();
             services.AddSwaggerGen();
             services.AddEndpointsApiExplorer();
-            services.AddScoped<GenerateTablesService>();
-            services.AddScoped<TemplatesServices>();
         }
 
         public void Configure(WebApplication app, IWebHostEnvironment env)
