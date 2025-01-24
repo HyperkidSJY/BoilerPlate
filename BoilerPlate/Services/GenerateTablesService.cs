@@ -15,6 +15,7 @@ namespace BoilerPlate.Services
         {
             List<String> lstFieldNames = new();
             int cnt = 1;
+            int totalFields = lstDTOTableDefinition.Count;
             foreach (DTOTableDefinition field in lstDTOTableDefinition)
             {
                 string query = $"{tableName.Substring(tableName.Length - 3)}F0{cnt} {field.DataType}";
@@ -43,6 +44,10 @@ namespace BoilerPlate.Services
                     query += $" Default {FormatDefaultExpression(field.DataType, field.DefaultExpression)}";
                 }
                 query += $" COMMENT '{field.ColumnName}'";
+                if (cnt < totalFields)
+                {
+                    query += ",";
+                }
                 cnt++;
                 lstFieldNames.Add(query);
             }
@@ -51,7 +56,7 @@ namespace BoilerPlate.Services
             {
                 Query += (fields + "\n");
             }
-            Query += "}";
+            Query += ")";
             Console.WriteLine(Query);
 
             _objResponse.Data = Query;
