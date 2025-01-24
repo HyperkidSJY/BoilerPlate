@@ -1,5 +1,6 @@
 ﻿using BoilerPlate.Models;
 using BoilerPlate.Models.DTO;
+using System.Diagnostics.Metrics;
 
 namespace BoilerPlate.Services
 {
@@ -52,6 +53,23 @@ namespace BoilerPlate.Services
             _objResponse.IsError = false;
             return _objResponse;
         }
-     
+        
+        public Response GenerateDTO(List<DTOTableDefinition> lstDTOTableDefinition, string tableName)
+        {
+            int cnt = 1;
+            string query = "";
+            foreach (DTOTableDefinition field in lstDTOTableDefinition)
+            {
+                string jsonProperty = $"[JsonProperty(\"{tableName[-3..]}1{cnt}\")]\n";
+                query = jsonProperty;
+                string attribute = $"public {field.DataType} {tableName[-3..]}F{cnt} {{ get; set; }}\n";
+                query += attribute;
+            }
+            string Query = $"public class DTO{tableName}\n{{\n{query}";
+            _objResponse.Data = Query;
+            _objResponse.IsError = false;
+            return _objResponse;
+        }
+
     }
 }
