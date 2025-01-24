@@ -1,6 +1,6 @@
 ﻿using BoilerPlate.Models;
 using BoilerPlate.Models.DTO;
-using System.Diagnostics.Metrics;
+using System.Globalization;
 
 namespace BoilerPlate.Services
 {
@@ -40,7 +40,7 @@ namespace BoilerPlate.Services
                 }
                 if (field.DefaultExpression != null)
                 {
-                    query += $" Default {FormatDefaultExpression(field.DataType,field.DefaultExpression)}";
+                    query += $" Default {FormatDefaultExpression(field.DataType, field.DefaultExpression)}";
                 }
                 query += $" COMMENT '{field.ColumnName}'";
                 cnt++;
@@ -58,7 +58,7 @@ namespace BoilerPlate.Services
             _objResponse.IsError = false;
             return _objResponse;
         }
-        
+
         public Response GenerateDTO(List<DTOTableDefinition> lstDTOTableDefinition, string tableName)
         {
             int cnt = 1;
@@ -79,6 +79,55 @@ namespace BoilerPlate.Services
             Console.WriteLine(Query);
             return _objResponse;
         }
+
+        public Response GeneratePoco(List<DTOTableDefinition> lstDTOTableDefinition, string tableName)
+        {
+            int cnt = 1;
+            string query = "";
+
+            foreach (DTOTableDefinition field in lstDTOTableDefinition)
+            {
+
+                string properties = "";
+                List<string> annotations = new List<string>();
+
+                if (field.IsPrimaryKey)
+                {
+                    annotations.Add("PrimaryKey");
+                }
+                if (field.IsAutoIncrement)
+                {
+                    annotations.Add("AutoIncrement");
+                }
+                if (field.IsUnique)
+                {
+                    annotations.Add("Unique");
+                }
+                if (field.IsNotNull)
+                {
+                    annotations.Add("ValidateNotNull");
+                }
+
+                if (annotations.Count > 0)
+                {
+                    properties = $"[{string.Join(" , ", annotations)}]";
+                }
+
+                string count = cnt > 10 ? cnt.ToString() : $"0{cnt}";
+                string csharpType = GetCSharpDataType(field.DataType.ToLower());
+                string attribute = $"\tpublic {csharpType} {tableName.Substring(tableName.Length - 3)}F{count} {{ get; set; }}\n\n";
+
+                query += $"\t{properties}\n{attribute}";
+                cnt++;
+            }
+
+            string Query = $"public class {tableName}\n{{\n{query}}}";
+            _objResponse.Data = Query;
+            _objResponse.IsError = false;
+            Console.WriteLine(Query);
+            return _objResponse;
+        }
+
         public string FormatDefaultExpression(string sqlDataType, string defaultExpression)
         {
             var typesRequiringQuotes = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
